@@ -4,10 +4,20 @@ using Workflow.Domain.Interfaces;
 using Workflow.Nodes;
 using Workflow.NodeSteps.Entities;
 
-namespace Workflow.NodeSteps.Steps
+namespace Workflow.Collections.Default.Steps
 {
+    /// <summary>
+    /// A Node to print data to the system console
+    /// </summary>
     public class ConsoleNode : INodeStepAsync
     {
+        /// <summary>
+        /// Executes the node.
+        /// </summary>
+        /// <param name="flow"></param>
+        /// <param name="node"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public Task<Context> ProcessAsync(Flow flow, Node node, Context context)
         {
             var data = NodeService.GetData<ConsoleData>(node);

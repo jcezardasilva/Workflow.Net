@@ -2,19 +2,43 @@
 using System.Threading.Tasks;
 using Workflow.Domain.Entities;
 using Workflow.Domain.Entities.DrawFlow;
+using Workflow.Domain.Interfaces;
 using Workflow.Nodes;
-using Workflow.NodeSteps;
 
 namespace Workflow.Main
 {
+    /// <summary>
+    /// An extensible workflow engine
+    /// </summary>
     public class WorkflowService
     {
-        private readonly NodeStepsService _nodeStepsService;
-        public WorkflowService()
+        private readonly INodeStepsService _nodeStepsService;
+        /// <summary>
+        /// Initializes the service with an INodeStepsService instance
+        /// </summary>
+        /// <param name="nodeStepsService"></param>
+        public WorkflowService(INodeStepsService nodeStepsService)
         {
-            _nodeStepsService = new NodeStepsService();
+            _nodeStepsService = nodeStepsService;
         }
+        /// <summary>
+        /// Executes the received flow
+        /// </summary>
+        /// <param name="flow"></param>
+        /// <returns></returns>
+        public async Task<Context> RunAsync(Flow flow)
+        {
+            var context = new Context();
+            context.Add("Flow", flow);
 
+            return await ProcessNextAsync(flow, context);
+        }
+        /// <summary>
+        /// Executes the received flow adding the input dictionary to the data context.
+        /// </summary>
+        /// <param name="flow"></param>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public async Task<Context> RunAsync(Flow flow, Dictionary<string, string> input)
         {
             var context = new Context();
@@ -26,6 +50,12 @@ namespace Workflow.Main
 
             return await ProcessNextAsync(flow, context);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="flow"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
         private async Task<Context> ProcessNextAsync(Flow flow, Context context)
         {
             var node = NodeService.GetStartNode(flow);

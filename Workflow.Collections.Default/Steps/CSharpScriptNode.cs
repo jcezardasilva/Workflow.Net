@@ -5,10 +5,20 @@ using Workflow.Domain.Interfaces;
 using Workflow.Nodes;
 using Workflow.NodeSteps.Entities;
 
-namespace Workflow.NodeSteps.Steps
+namespace Workflow.Collections.Default.Steps
 {
+    /// <summary>
+    /// A Node to executes a CSharp script.
+    /// </summary>
     public class CSharpScriptNode : INodeStepAsync
     {
+        /// <summary>
+        /// Executes the node
+        /// </summary>
+        /// <param name="flow"></param>
+        /// <param name="node"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public async Task<Context> ProcessAsync(Flow flow, Node node,Context context)
         {
             var data = NodeService.GetData<ScriptData>(node);

@@ -2,6 +2,9 @@
 
 namespace Workflow.NodeSteps.Entities
 {
+    /// <summary>
+    /// The ScriptNode data model
+    /// </summary>
     public class ScriptData
     {
         /// <summary>

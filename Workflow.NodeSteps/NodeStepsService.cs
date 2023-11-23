@@ -1,23 +1,22 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Workflow.Domain.Exceptions;
 using Workflow.Domain.Interfaces;
-using Workflow.NodeSteps.Steps;
 
 namespace Workflow.NodeSteps
 {
-    public class NodeStepsService
+    /// <summary>
+    /// Provides a steps container to the workflow
+    /// </summary>
+    public class NodeStepsService : INodeStepsService
     {
-        private readonly ServiceProvider _serviceProvider;
+        private readonly IServiceProvider _serviceProvider;
+
         /// <summary>
         /// Initializes the factore
         /// </summary>
-        public NodeStepsService()
+        public NodeStepsService(IServiceProvider provider)
         {
-            _serviceProvider = new ServiceCollection()
-                .AddTransient<INodeStepAsync, ConsoleNode>()
-                .AddTransient<INodeStepAsync, HttpRequestNode>()
-                .AddTransient<INodeStepAsync, CSharpScriptNode>()
-                .BuildServiceProvider();
+            _serviceProvider = provider;
         }
         /// <summary>
         /// Gets a NodeStep instance

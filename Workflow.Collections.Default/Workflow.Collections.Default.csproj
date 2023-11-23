@@ -2,13 +2,19 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 	<Version>0.1.0</Version>
 	<Authors>Julio Cezar da Silva</Authors>
-	<Description>Workflow.NET is a workflow engine for .NET.</Description>
+	<Description>Workflow.Collections.Default contains standard node steps for Workflow.NET.</Description>
 	<GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
 	<GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.7.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Workflow.Domain\Workflow.Domain.csproj" />

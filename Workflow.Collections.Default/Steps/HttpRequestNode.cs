@@ -5,10 +5,21 @@ using Workflow.Domain.Interfaces;
 using Workflow.Nodes;
 using Workflow.NodeSteps.Entities;
 
-namespace Workflow.NodeSteps.Steps
+namespace Workflow.Collections.Default.Steps
 {
+    /// <summary>
+    /// A Node to execute a Http Request.
+    /// </summary>
     public class HttpRequestNode : INodeStepAsync
     {
+        /// <summary>
+        /// Executes the node
+        /// </summary>
+        /// <param name="flow"></param>
+        /// <param name="node"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        /// <exception cref="WorkflowException{HttpRequestNode}"></exception>
         public async Task<Context> ProcessAsync(Flow flow, Node node, Context context)
         {
             var data = NodeService.GetData<HttpRequestData>(node);
@@ -23,7 +34,6 @@ namespace Workflow.NodeSteps.Steps
             };
             var httpResponseMessage = await new HttpClient().SendAsync(request) ?? throw new WorkflowException<HttpRequestNode>("The http request failed.");
 
-            #region output
             context.Add(data.OutputStatus, (int)httpResponseMessage.StatusCode);
             context.Add(data.OutputContentType, httpResponseMessage.Content.Headers.ContentType?.MediaType ?? string.Empty);
             context.Add(data.OutputContent, await httpResponseMessage.Content.ReadAsStringAsync());
@@ -32,7 +42,6 @@ namespace Workflow.NodeSteps.Steps
 
             NodeService.SetNext(flow, node, context, outputKey);
             return context;
-            #endregion
         }
     }
 }

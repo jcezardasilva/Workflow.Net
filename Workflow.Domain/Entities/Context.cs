@@ -3,6 +3,9 @@ using Workflow.Domain.Exceptions;
 
 namespace Workflow.Domain.Entities
 {
+    /// <summary>
+    /// The workflow data context
+    /// </summary>
     public class Context
     {
         private readonly Dictionary<string, object> _map;
