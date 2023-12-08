@@ -11,5 +11,9 @@ namespace Workflow.Domain.Entities.DrawFlow
         /// The DrawFlow pages
         /// </summary>
         public Dictionary<string, FlowPage> DrawFlow { get; set; } = new Dictionary<string, FlowPage>();
+        /// <summary>
+        /// Environment variables
+        /// </summary>
+        public Dictionary<string, string> Environment { get; set; } = new Dictionary<string, string>();
     }
 }
