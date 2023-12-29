@@ -51,6 +51,18 @@ namespace Workflow.Main
             return await ProcessNextAsync(flow, context);
         }
         /// <summary>
+        /// Executes the received flow and context
+        /// </summary>
+        /// <param name="flow"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public async Task<Context> RunAsync(Flow flow, Context context)
+        {
+            context.Upsert("Flow", flow);
+
+            return await ProcessNextAsync(flow, context);
+        }
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="flow"></param>

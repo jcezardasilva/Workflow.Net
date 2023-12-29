@@ -118,5 +118,24 @@ namespace Workflow.Domain.Entities
             value = default;
             return false;
         }
+        /// <summary>
+        /// Exports the context data as a dictionary
+        /// </summary>
+        /// <returns></returns>
+        public Dictionary<string,object> ToDictionary()
+        {
+            return _map;
+        }
+        /// <summary>
+        /// Adds multiple itens to the context
+        /// </summary>
+        /// <param name="values"></param>
+        public void AddRange(Dictionary<string,object> values)
+        {
+            foreach(var item in values)
+            {
+                _map.Add(item.Key, item.Value);
+            }
+        }
     }
 }
