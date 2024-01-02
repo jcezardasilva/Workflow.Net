@@ -18,7 +18,12 @@ namespace Workflow.Nodes
         /// <returns></returns>
         public static Node? GetStartNode(Flow flow)
         {
-            return flow.DrawFlow.FirstOrDefault().Value.Data.FirstOrDefault(item => item.Value.Inputs.Count == 0).Value;
+            var startFlow = !string.IsNullOrEmpty(flow.MainFlow) ? flow.DrawFlow[flow.MainFlow] : flow.DrawFlow.FirstOrDefault().Value;
+            if (!string.IsNullOrEmpty(flow.StartNodeId))
+            {
+                return startFlow.Data[flow.StartNodeId];
+            }
+            return startFlow.Data.FirstOrDefault(item => item.Value.Inputs.FirstOrDefault().Value.Connections.Count == 0).Value;
         }
         /// <summary>
         /// Retrieves the next flow node. If it not exists returns null.

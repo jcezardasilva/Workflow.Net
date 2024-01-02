@@ -24,6 +24,14 @@ namespace Workflow.Domain.Entities.DrawFlow
         /// </summary>
         public string Description { get; set; } = string.Empty;
         /// <summary>
+        /// The start node ID
+        /// </summary>
+        public string StartNodeId { get; set; } = string.Empty;
+        /// <summary>
+        /// The default flow to be called at the workflow startup.
+        /// </summary>
+        public string MainFlow {  get; set; } = "Home";
+        /// <summary>
         /// Environment variables
         /// </summary>
         public Dictionary<string, string> Environment { get; set; } = new Dictionary<string, string>();
