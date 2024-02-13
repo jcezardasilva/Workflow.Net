@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
-using Workflow.Domain.Entities.DrawFlow;
+using Workflow.Domain.Entities.Flows;
 using Workflow.Domain.Interfaces;
 using Workflow.Main;
 

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace Workflow.Domain.Entities.DrawFlow
+namespace Workflow.Domain.Entities.Flows
 {
     /// <summary>
     /// A DrawFlow Node
@@ -22,7 +22,7 @@ namespace Workflow.Domain.Entities.DrawFlow
         /// The node data model
         /// </summary>
         [JsonPropertyName("data")]
-        public Dictionary<string, string> Data { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, object> Data { get; set; } = new Dictionary<string, object>();
         /// <summary>
         /// The node class
         /// </summary>

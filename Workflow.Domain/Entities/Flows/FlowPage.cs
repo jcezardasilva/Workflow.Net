@@ -1,30 +1,30 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace Workflow.Domain.Entities.DrawFlow
+namespace Workflow.Domain.Entities.Flows
 {
     /// <summary>
-    /// The DrawFlow data model
+    /// A DrawFlow page data model
     /// </summary>
-    public class Flow
+    public class FlowPage
     {
         /// <summary>
-        /// The DrawFlow pages
+        /// The DrawFlow page nodes
         /// </summary>
-        [JsonPropertyName("drawflow")]
-        public Dictionary<string, FlowPage> DrawFlow { get; set; } = new Dictionary<string, FlowPage>();
+        [JsonPropertyName("data")]
+        public Dictionary<string, Node> Data { get; set; } = new Dictionary<string, Node>();
         /// <summary>
-        /// The flow ID
+        /// The page ID
         /// </summary>
         [JsonPropertyName("id")]
         public string Id { get; set; } = string.Empty;
         /// <summary>
-        /// The flow name
+        /// The page name
         /// </summary>
         [JsonPropertyName("name")]
         public string Name { get; set; } = string.Empty;
         /// <summary>
-        /// The flow description
+        /// The page description
         /// </summary>
         [JsonPropertyName("description")]
         public string Description { get; set; } = string.Empty;
@@ -34,14 +34,9 @@ namespace Workflow.Domain.Entities.DrawFlow
         [JsonPropertyName("startNodeId")]
         public string StartNodeId { get; set; } = string.Empty;
         /// <summary>
-        /// The default flow to be called at the workflow startup.
-        /// </summary>
-        [JsonPropertyName("mainflow")]
-        public string MainFlow {  get; set; } = "Home";
-        /// <summary>
         /// Environment variables
         /// </summary>
         [JsonPropertyName("environment")]
-        public Dictionary<string, string> Environment { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, object> Environment { get; set; } = new Dictionary<string, object>();
     }
 }

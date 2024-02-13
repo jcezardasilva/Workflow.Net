@@ -37,22 +37,21 @@ namespace Workflow.Domain.Entities
         {
             if (!_map.ContainsKey(key))
             {
-                throw new WorkflowException<Context>("Inexistent key.");
+                throw new WorkflowException<Context>($"Inexistent '{key}' key.");
             }
             return (T)_map[key];
         }
         /// <summary>
         /// Removes a value from data context
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <returns></returns>
         /// <exception cref="WorkflowException{Context}"></exception>
-        public void Delete<T>(string key)
+        public void Delete(string key)
         {
             if (!_map.ContainsKey(key))
             {
-                throw new WorkflowException<Context>("Inexistent key.");
+                throw new WorkflowException<Context>($"Inexistent '{key}' key.");
             }
             _map.Remove(key);
         }
@@ -68,7 +67,7 @@ namespace Workflow.Domain.Entities
         {
             if (!_map.ContainsKey(key))
             {
-                throw new WorkflowException<Context>("Inexistent key.");
+                throw new WorkflowException<Context>($"Inexistent '{key}' key.");
             }
             _map[key] = newValue;
         }
@@ -134,7 +133,10 @@ namespace Workflow.Domain.Entities
         {
             foreach(var item in values)
             {
-                _map.Add(item.Key, item.Value);
+                if(!_map.ContainsKey(item.Key))
+                {
+                    _map.Add(item.Key, item.Value);
+                }
             }
         }
     }

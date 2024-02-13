@@ -1,5 +1,5 @@
 ﻿using Workflow.Domain.Entities;
-using Workflow.Domain.Entities.DrawFlow;
+using Workflow.Domain.Entities.Flows;
 using Workflow.Domain.Interfaces;
 using Workflow.Nodes;
 using Workflow.NodeSteps.Entities;

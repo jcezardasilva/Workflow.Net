@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Workflow.Domain.Entities;
-using Workflow.Domain.Entities.DrawFlow;
+using Workflow.Domain.Entities.Flows;
 
 namespace Workflow.Domain.Interfaces
 {

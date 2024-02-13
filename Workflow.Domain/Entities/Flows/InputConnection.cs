@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Workflow.Domain.Entities.DrawFlow
+namespace Workflow.Domain.Entities.Flows
 {
     /// <summary>
     /// An node input connnection

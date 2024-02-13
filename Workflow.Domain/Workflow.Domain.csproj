@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
-	  <Version>0.8.0</Version>
+	  <Version>1.0.0</Version>
 	  <Authors>Julio Cezar da Silva</Authors>
 	  <Description>Workflow.NET domain components.</Description>
 	  <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>

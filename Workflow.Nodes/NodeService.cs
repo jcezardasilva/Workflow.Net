@@ -1,7 +1,8 @@
 ﻿using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using Workflow.Domain.Entities;
-using Workflow.Domain.Entities.DrawFlow;
+using Workflow.Domain.Entities.Flows;
 using Workflow.Domain.Exceptions;
 
 namespace Workflow.Nodes
@@ -12,18 +13,27 @@ namespace Workflow.Nodes
     public class NodeService
     {
         /// <summary>
-        /// Retrieves the first flow node
+        /// Retrieves the flow startup node
         /// </summary>
         /// <param name="flow"></param>
         /// <returns></returns>
         public static Node? GetStartNode(Flow flow)
         {
-            var startFlow = !string.IsNullOrEmpty(flow.MainFlow) ? flow.DrawFlow[flow.MainFlow] : flow.DrawFlow.FirstOrDefault().Value;
-            if (!string.IsNullOrEmpty(flow.StartNodeId))
+            var startPage = !string.IsNullOrEmpty(flow.MainPage) ? flow.Pages[flow.MainPage] : flow.Pages.FirstOrDefault().Value;
+            return GetStartNode(startPage);
+        }
+        /// <summary>
+        /// Retrieves the page startup node
+        /// </summary>
+        /// <param name="page"></param>
+        /// <returns></returns>
+        public static Node? GetStartNode(FlowPage page)
+        {
+            if (!string.IsNullOrEmpty(page.StartNodeId))
             {
-                return startFlow.Data[flow.StartNodeId];
+                return page.Data[page.StartNodeId];
             }
-            return startFlow.Data.FirstOrDefault(item => item.Value.Inputs.FirstOrDefault().Value.Connections.Count == 0).Value;
+            return null;
         }
         /// <summary>
         /// Retrieves the next flow node. If it not exists returns null.
@@ -34,8 +44,27 @@ namespace Workflow.Nodes
         {
             if (context.TryGet("NextNode", out Node? nextNode) && nextNode != null)
             {
-                context.Delete<Node>("NextNode");
+                context.Delete("NextNode");
                 return nextNode;
+            }
+            return null;
+        }
+        /// <summary>
+        /// Retrieves the next flow node group. If it not exists returns null.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public static IEnumerable<Node>? GetNextNodes(Context context)
+        {
+            if (context.TryGet("NextNodes", out List<Node>? nextNodes) && nextNodes != null)
+            {
+                context.Delete("NextNodes");
+                return nextNodes;
+            }
+            var node = GetNextNode(context);
+            if(node != null)
+            {
+                return new List<Node>() { node };
             }
             return null;
         }
@@ -47,7 +76,7 @@ namespace Workflow.Nodes
         /// <returns></returns>
         public static Node GetNext(Flow flow, OutputConnection outputConnection)
         {
-            return flow.DrawFlow.First().Value.Data.First(item => item.Value.Id == Convert.ToInt32(outputConnection.Node)).Value;
+            return flow.Pages.First().Value.Data.First(item => item.Value.Id == Convert.ToInt32(outputConnection.Node)).Value;
         }
         /// <summary>
         /// Sets the next node to the data context.
@@ -70,6 +99,39 @@ namespace Workflow.Nodes
             return context;
         }
         /// <summary>
+        /// Sets the next node to the data context. Supports parallel multiple nodes.
+        /// </summary>
+        /// <param name="flow"></param>
+        /// <param name="node"></param>
+        /// <param name="context"></param>
+        /// <param name="outputKey"></param>
+        /// <param name="allowMultipleOutputs"></param>
+        /// <returns></returns>
+        public static Context SetNext(Flow flow, Node node, Context context, string outputKey, bool allowMultipleOutputs=false)
+        {
+            if (node.Outputs.Count > 0)
+            {
+                var output = node.Outputs[outputKey];
+                if (output != null && output.Connections.Count > 0)
+                {
+                    if(allowMultipleOutputs)
+                    {
+                        var nodes = new List<Node>();
+                        foreach(var connection in output.Connections)
+                        {
+                            nodes.Add(GetNext(flow, connection));
+                        }
+                        context.Upsert("NextNodes", nodes);
+                    }
+                    else
+                    {
+                        context.Upsert("NextNode", GetNext(flow, output.Connections.First()));
+                    }
+                }
+            }
+            return context;
+        }
+        /// <summary>
         /// Retrieves the node data
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -87,6 +149,24 @@ namespace Workflow.Nodes
                 throw new WorkflowException<NodeService>("Cannot parse the Data.");
         }
         /// <summary>
+        /// Retrieves the node data
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="node"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        /// <exception cref="WorkflowException{NodeService}"></exception>
+        public static bool TryGetData<T>(Node node, out T? value)
+        {
+            if(node.Data.TryGetValue(typeof(T).Name, out object? data) && data != null && data is T t)
+            {
+                value = t;
+                return true;
+            }
+            value = default;
+            return false;
+        }
+        /// <summary>
         /// Sets values from data context to the node variables tagged as '{{variable-name}}'.
         /// </summary>
         /// <param name="text"></param>
@@ -100,7 +180,8 @@ namespace Workflow.Nodes
             MatchCollection matches = regex.Matches(text);
             foreach (Match match in matches.ToList())
             {
-                text = text.Replace(match.Value, context.Get<string>(match.Groups[1].Value));
+                context.TryGet(match.Groups[1].Value, out string? value);
+                text = text.Replace(match.Value, value ?? string.Empty);
             }
             return text;
         }

@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Workflow.Domain.Entities;
-using Workflow.Domain.Entities.DrawFlow;
+using Workflow.Domain.Entities.Flows;
 using Workflow.Domain.Interfaces;
 using Workflow.Nodes;
 
@@ -63,19 +64,32 @@ namespace Workflow.Main
             return await ProcessNextAsync(flow, context);
         }
         /// <summary>
-        /// 
+        /// Executes nodes recursively until find no more nodes.
         /// </summary>
         /// <param name="flow"></param>
         /// <param name="context"></param>
         /// <returns></returns>
         private async Task<Context> ProcessNextAsync(Flow flow, Context context)
         {
+            var nodes = new List<Node>();
             var node = NodeService.GetStartNode(flow);
-
-            while (node != null)
+            if(node != null)
             {
-                context = await _nodeStepsService.GetNodeStep(node.Name).ProcessAsync(flow, node, context);
-                node = NodeService.GetNextNode(context);
+                nodes.Add(node);
+            }
+
+            while (nodes.Count>0)
+            {
+                var tasks = new List<Task<Context>>();
+                tasks.AddRange(nodes.Select(node=> _nodeStepsService.GetNodeStep(node.Name).ProcessAsync(flow, node, context)));
+                
+                var contexts = await Task.WhenAll(tasks);
+
+                foreach(var item in contexts)
+                {
+                    context.AddRange(item.ToDictionary());
+                }
+                nodes = NodeService.GetNextNodes(context)?.ToList() ?? new List<Node>();
             }
             return context;
         }

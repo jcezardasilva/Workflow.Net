@@ -18,5 +18,15 @@ namespace Workflow.NodeSteps
             services.AddSingleton<INodeStepsService,NodeStepsService>();
             return new NodeStepsBuilder(services);
         }
+        /// <summary>
+        /// Adds a NodeStepsService to the parent IServiceCollection
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddNodeStepsService(this IServiceCollection services)
+        {
+            services.AddSingleton<INodeStepsService, NodeStepsService>();
+            return services;
+        }
     }
 }
