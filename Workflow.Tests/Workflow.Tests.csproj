@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -16,5 +16,14 @@
     <PackageReference Include="NUnit.Analyzers" Version="3.6.1" />
     <PackageReference Include="coverlet.collector" Version="3.2.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Workflow.Collections.Default\Workflow.Collections.Default.csproj" />
+    <ProjectReference Include="..\Workflow.Main\Workflow.Main.csproj" />
+    <ProjectReference Include="..\Workflow.Nodes\Workflow.Nodes.csproj" />
+  </ItemGroup>
+	<ItemGroup>
+		<None Update="flow.json" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
 
 </Project>

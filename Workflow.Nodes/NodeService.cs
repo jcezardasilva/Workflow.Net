@@ -36,6 +36,20 @@ namespace Workflow.Nodes
             return null;
         }
         /// <summary>
+        /// Retrieves the page startup node
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="nodeId"></param>
+        /// <returns></returns>
+        public static Node? GetNode(FlowPage page,string nodeId)
+        {
+            if(page.Data.ContainsKey(nodeId))
+            {
+                return page.Data[nodeId];
+            }
+            return null;
+        }
+        /// <summary>
         /// Retrieves the next flow node. If it not exists returns null.
         /// </summary>
         /// <param name="context"></param>
@@ -153,12 +167,13 @@ namespace Workflow.Nodes
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="node"></param>
+        /// <param name="key"></param>
         /// <param name="value"></param>
         /// <returns></returns>
         /// <exception cref="WorkflowException{NodeService}"></exception>
-        public static bool TryGetData<T>(Node node, out T? value)
+        public static bool TryGetData<T>(Node node, string key, out T? value)
         {
-            if(node.Data.TryGetValue(typeof(T).Name, out object? data) && data != null && data is T t)
+            if(node.Data.TryGetValue(key, out object? data) && data != null && data is T t)
             {
                 value = t;
                 return true;
