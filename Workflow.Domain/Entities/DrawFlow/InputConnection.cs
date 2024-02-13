@@ -1,4 +1,6 @@
-﻿namespace Workflow.Domain.Entities.DrawFlow
+﻿using System.Text.Json.Serialization;
+
+namespace Workflow.Domain.Entities.DrawFlow
 {
     /// <summary>
     /// An node input connnection
@@ -8,10 +10,12 @@
         /// <summary>
         /// The predecessor node id
         /// </summary>
+        [JsonPropertyName("node")]
         public string Node { get; set; } = string.Empty;
         /// <summary>
         /// The predecessor node output name
         /// </summary>
+        [JsonPropertyName("input")]
         public string Input { get; set; } = string.Empty;
     }
 }

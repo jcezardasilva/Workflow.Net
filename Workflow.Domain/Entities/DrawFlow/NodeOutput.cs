@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Workflow.Domain.Entities.DrawFlow
 {
@@ -10,6 +11,7 @@ namespace Workflow.Domain.Entities.DrawFlow
         /// <summary>
         /// The node output connections
         /// </summary>
+        [JsonPropertyName("connections")]
         public List<OutputConnection> Connections { get; set; } = new List<OutputConnection>();
     }
 }

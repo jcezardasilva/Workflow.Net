@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Workflow.Domain.Entities.DrawFlow
 {
@@ -10,42 +11,52 @@ namespace Workflow.Domain.Entities.DrawFlow
         /// <summary>
         /// The node id
         /// </summary>
+        [JsonPropertyName("id")]
         public int Id { get; set; }
         /// <summary>
         /// The node name
         /// </summary>
+        [JsonPropertyName("name")]
         public string Name { get; set; } = string.Empty;
         /// <summary>
         /// The node data model
         /// </summary>
+        [JsonPropertyName("data")]
         public Dictionary<string, string> Data { get; set; } = new Dictionary<string, string>();
         /// <summary>
         /// The node class
         /// </summary>
+        [JsonPropertyName("class")]
         public string Class { get; set; } = string.Empty;
         /// <summary>
         /// The node HTML
         /// </summary>
+        [JsonPropertyName("html")]
         public string Html { get; set; } = string.Empty;
         /// <summary>
         /// The node type
         /// </summary>
+        [JsonPropertyName("typenode")]
         public string Typenode { get; set; } = string.Empty;
         /// <summary>
         /// The node inputs
         /// </summary>
+        [JsonPropertyName("inputs")]
         public Dictionary<string, NodeInput> Inputs { get; set; } = new Dictionary<string, NodeInput>();
         /// <summary>
         /// The node outputs
         /// </summary>
+        [JsonPropertyName("outputs")]
         public Dictionary<string, NodeOutput> Outputs { get; set; } = new Dictionary<string, NodeOutput>();
         /// <summary>
         /// The node horizontal position
         /// </summary>
-        public int PosX { get; set; }
+        [JsonPropertyName("pos_x")]
+        public double PosX { get; set; }
         /// <summary>
         /// The node vertical position
         /// </summary>
-        public int PosY { get; set; }
+        [JsonPropertyName("pos_y")]
+        public double PosY { get; set; }
     }
 }
