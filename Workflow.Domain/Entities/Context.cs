@@ -37,7 +37,7 @@ namespace Workflow.Domain.Entities
         {
             if (!_map.ContainsKey(key))
             {
-                throw new WorkflowException<Context>("Inexistent key.");
+                throw new WorkflowException<Context>($"Inexistent key: {key}.");
             }
             return (T)_map[key];
         }
@@ -52,7 +52,7 @@ namespace Workflow.Domain.Entities
         {
             if (!_map.ContainsKey(key))
             {
-                throw new WorkflowException<Context>("Inexistent key.");
+                throw new WorkflowException<Context>($"Inexistent key: {key}.");
             }
             _map.Remove(key);
         }
@@ -68,7 +68,7 @@ namespace Workflow.Domain.Entities
         {
             if (!_map.ContainsKey(key))
             {
-                throw new WorkflowException<Context>("Inexistent key.");
+                throw new WorkflowException<Context>($"Inexistent key: {key}.");
             }
             _map[key] = newValue;
         }
