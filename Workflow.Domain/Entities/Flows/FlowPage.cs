@@ -34,9 +34,9 @@ namespace Workflow.Domain.Entities.Flows
         [JsonPropertyName("startNodeId")]
         public string StartNodeId { get; set; } = string.Empty;
         /// <summary>
-        /// Environment variables
+        /// Page variables
         /// </summary>
-        [JsonPropertyName("environment")]
-        public Dictionary<string, object> Environment { get; set; } = new Dictionary<string, object>();
+        [JsonPropertyName("variables")]
+        public Dictionary<string, object> Variables { get; set; } = new Dictionary<string, object>();
     }
 }

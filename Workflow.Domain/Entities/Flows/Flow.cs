@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 namespace Workflow.Domain.Entities.Flows
 {
     /// <summary>
-    /// The Flow data model
+    /// The Flow package
     /// </summary>
     public class Flow
     {
@@ -34,9 +34,9 @@ namespace Workflow.Domain.Entities.Flows
         [JsonPropertyName("mainPage")]
         public string MainPage { get; set; } = "Home";
         /// <summary>
-        /// Environment variables
+        /// Package variables
         /// </summary>
-        [JsonPropertyName("environment")]
-        public Dictionary<string, object> Environment { get; set; } = new Dictionary<string, object>();
+        [JsonPropertyName("variables")]
+        public Dictionary<string, object> Variables { get; set; } = new Dictionary<string, object>();
     }
 }

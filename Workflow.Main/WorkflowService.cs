@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Workflow.Domain.Entities;
 using Workflow.Domain.Entities.Flows;
 using Workflow.Domain.Interfaces;
@@ -32,7 +33,7 @@ namespace Workflow.Main
             var context = new Context();
             context.Add("Flow", flow);
 
-            return await ProcessNextAsync(flow, context);
+            return await ProcessAsync(flow, context);
         }
         /// <summary>
         /// Executes the received flow adding the input dictionary to the data context.
@@ -49,7 +50,7 @@ namespace Workflow.Main
                 context.Add(item.Key, item.Value);
             }
 
-            return await ProcessNextAsync(flow, context);
+            return await ProcessAsync(flow, context);
         }
         /// <summary>
         /// Executes the received flow and context
@@ -61,7 +62,7 @@ namespace Workflow.Main
         {
             context.Upsert("Flow", flow);
 
-            return await ProcessNextAsync(flow, context);
+            return await ProcessAsync(flow, context);
         }
         /// <summary>
         /// Executes nodes recursively until find no more nodes.
@@ -69,7 +70,7 @@ namespace Workflow.Main
         /// <param name="flow"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        private async Task<Context> ProcessNextAsync(Flow flow, Context context)
+        private async Task<Context> ProcessAsync(Flow flow, Context context)
         {
             var nodes = new List<Node>();
             var node = NodeService.GetStartNode(flow);
@@ -90,6 +91,26 @@ namespace Workflow.Main
                     context.AddRange(item.ToDictionary());
                 }
                 nodes = NodeService.GetNextNodes(context)?.ToList() ?? new List<Node>();
+            }
+            return context;
+        }
+        /// <summary>
+        /// Process the next step. Support multiple parallel steps.
+        /// </summary>
+        /// <param name="flow"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public async Task<Context> RunNextStepAsync(Flow flow, Context context)
+        {
+            var nodes = NodeService.GetNextNodes(context)?.ToList() ?? new List<Node>();
+
+            var tasks = new List<Task<Context>>();
+            tasks.AddRange(nodes.Select(node => _nodeStepsService.GetNodeStep(node.Name).ProcessAsync(flow, node, context)));
+
+            var contexts = await Task.WhenAll(tasks);
+            foreach (var item in contexts)
+            {
+                context.AddRange(item.ToDictionary());
             }
             return context;
         }
