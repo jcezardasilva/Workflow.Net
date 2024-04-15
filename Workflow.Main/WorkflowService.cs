@@ -78,6 +78,22 @@ namespace Workflow.Main
                 node = NodeService.GetNextNode(context);
             }
             return context;
+        }        
+        /// <summary>
+        /// Process the next step. Support multiple only a single step.
+        /// </summary>
+        /// <param name="flow"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public async Task<Context> RunNextStepAsync(Flow flow, Context context)
+        {
+            var node = NodeService.GetNextNode(context);
+            if(node == null)
+            {
+                return context;
+            }    
+
+            return await _nodeStepsService.GetNodeStep(node.Name).ProcessAsync(flow, node, context);
         }
     }
 }

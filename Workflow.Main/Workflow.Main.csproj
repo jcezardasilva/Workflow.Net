@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
-	<Version>0.8.1</Version>
+	<Version>0.9.0</Version>
 	<Authors>Julio Cezar da Silva</Authors>
 	<Description>Workflow.NET is a workflow engine for .NET.</Description>
 	<GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
