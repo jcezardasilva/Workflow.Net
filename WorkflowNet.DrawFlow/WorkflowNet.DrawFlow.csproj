@@ -4,4 +4,8 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\WorkflowNet.Core\WorkflowNet.Core.csproj" />
+  </ItemGroup>
+
 </Project>
