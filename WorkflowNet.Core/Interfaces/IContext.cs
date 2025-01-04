@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using WorkflowNet.Core.Interfaces.Actions;
 
 namespace WorkflowNet.Core.Interfaces
 {
-    public interface IContext : IDictionary<string, object>
+    public interface IContext : IDictionary<string, object>,IOutputConnector, ISession
     {
         void SetPackage(IPackage package);
         IPackage GetPackage();

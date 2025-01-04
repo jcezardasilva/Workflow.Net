@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using WorkflowNet.Core.Interfaces;
+using WorkflowNet.Core.Interfaces.Actions;
 
 namespace WorkflowNet.Core.Models
 {
@@ -10,6 +12,13 @@ namespace WorkflowNet.Core.Models
         private const string CURRENT_PAGE = nameof(CURRENT_PAGE);
         private const string CURRENT_ACTION = nameof(CURRENT_ACTION);
         private const string OUTPUT_CONNECTOR = nameof(OUTPUT_CONNECTOR);
+        private Guid _id;
+        private DateTime _startTime;
+        private DateTime _endTime;
+
+        public Guid SessionId { get => _id; set => _id = value; }
+        public DateTime StartTime { get => _startTime; set => _startTime = value; }
+        public DateTime EndTime { get => _endTime; set => _endTime = value; }
 
         public IEnumerable<IVariable> ApplyValues(IEnumerable<IVariable> variables)
         {
@@ -46,21 +55,45 @@ namespace WorkflowNet.Core.Models
             }
             output.Set(variableValue);
             return output;
-        }        
+        }
+
+        public void EndSession()
+        {
+            _endTime = DateTime.Now;
+        }
 
         public IAction GetCurrentAction()
         {
-            return (IAction)this[CURRENT_ACTION];
+            if (ContainsKey(CURRENT_ACTION))
+                return (IAction)this[CURRENT_ACTION];
+
+            return GetCurrentPage().StartAction;
         }
 
         public IPage GetCurrentPage()
         {
-            return (IPage)this[CURRENT_PAGE];
+            if(ContainsKey(CURRENT_PAGE))
+                return (IPage)this[CURRENT_PAGE];
+
+            return GetPackage().MainPage;
+        }
+
+        public IActionConnector GetOutputConnector()
+        {
+            if (ContainsKey(OUTPUT_CONNECTOR))
+                return (IActionConnector)this[OUTPUT_CONNECTOR];
+
+            return default;
         }
 
         public IPackage GetPackage()
         {
             return (IPackage)this[CURRENT_PACKAGE];
+        }
+
+        public void RemoveOutputConnector()
+        {
+            Remove(OUTPUT_CONNECTOR);
         }
 
         public void SetCurrentAction(IAction action)
@@ -73,9 +106,20 @@ namespace WorkflowNet.Core.Models
             this[CURRENT_PAGE] = page;
         }
 
+        public void SetOutputConnector(IActionConnector ActionConnector)
+        {
+            this[OUTPUT_CONNECTOR] = ActionConnector;
+        }
+
         public void SetPackage(IPackage package)
         {
             this[CURRENT_PACKAGE] = package;
+        }
+
+        public void StartSession()
+        {
+            _id = Guid.NewGuid();
+            _startTime = DateTime.Now;
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace WorkflowNet.Core.Interfaces
+namespace WorkflowNet.Core.Interfaces.Actions
 {
     public interface IActions
     {

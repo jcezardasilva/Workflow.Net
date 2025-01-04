@@ -2,6 +2,7 @@
 using System.Linq;
 using WorkflowNet.Core.Extensions.List;
 using WorkflowNet.Core.Interfaces;
+using WorkflowNet.Core.Interfaces.Actions;
 
 namespace WorkflowNet.Core.Models
 {

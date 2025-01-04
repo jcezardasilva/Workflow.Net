@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using WorkflowNet.Core.Extensions.Lists;
+using WorkflowNet.Core.Extensions.List;
 using WorkflowNet.Core.Interfaces;
 
 namespace WorkflowNet.Core.Models
