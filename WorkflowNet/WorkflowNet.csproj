@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Nullable>enable</Nullable>
     <Version>2.0.0</Version>
     <Authors>Julio Cezar da Silva</Authors>
     <Description>WorkflowNet is a workflow orchestrator for dotnet.</Description>

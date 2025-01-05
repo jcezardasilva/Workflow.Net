@@ -1,0 +1,57 @@
+{
+  "pages": [
+    {
+      "name": "Home",
+      "actions": [
+        {
+          "id": "1",
+          "name": "HttpGetAction",
+          "data": {
+            "url": "https://dog-api.kinduff.com/api/facts",
+            "outputStatus": "http_status",
+            "outputContentType": "http_contenttype",
+            "outputContent": "http_content"
+          },
+          "inputs": [],
+          "outputs": [
+            {
+              "id": "1",
+              "connections": [
+                {
+                  "actionId": "2",
+                  "connectorId": "1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "2",
+          "name": "ConsoleAction",
+          "data": {
+            "message": "Dog facts: {{http_content}}."
+          },
+          "inputs": [
+            {
+              "id": "1",
+              "connections": [
+                {
+                  "actionId": "1",
+                  "connectorId": "1"
+                }
+              ]
+            }
+          ],
+          "outputs": []
+        }
+      ]
+    }
+  ],
+  "id": "flowid",
+  "name": "flowname",
+  "environment": {
+    "key1": "value1",
+    "key2": "value2",
+    "key3": "value3"
+  }
+}

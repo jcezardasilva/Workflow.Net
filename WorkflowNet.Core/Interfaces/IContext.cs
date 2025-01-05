@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
-using WorkflowNet.Core.Interfaces.Actions;
+using WorkflowNet.Core.Models;
 
 namespace WorkflowNet.Core.Interfaces
 {
     public interface IContext : IDictionary<string, object>,IOutputConnector, ISession
     {
-        void SetPackage(IPackage package);
-        IPackage GetPackage();
-        void SetCurrentPage(IPage page);
-        IPage GetCurrentPage();
-        void SetCurrentAction(IAction action);
-        IAction GetCurrentAction();
-        IEnumerable<IVariable> ApplyValues(IEnumerable<IVariable> variables);
-        IVariable ApplyValues(IVariable variable);
+        void SetPackage(Package package);
+        Package GetPackage();
+        void SetCurrentPage(Page page);
+        Page GetCurrentPage();
+        void SetCurrentAction(Action action);
+        Action GetCurrentAction();
+        Dictionary<string, object> ApplyValues(Dictionary<string,object> variables);
+        string ApplyValues(string variable);
     }
 }

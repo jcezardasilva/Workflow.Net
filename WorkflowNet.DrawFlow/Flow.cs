@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using WorkflowNet.Core.Interfaces;
+using WorkflowNet.Core.Models;
 
 namespace WorkflowNet.DrawFlow
 {
-    public class Flow : IPackage, IBaseEntity
+    public class Flow : BaseEntity
     {
         private Dictionary<string,IPage> _pages = new Dictionary<string,IPage>();
         private Dictionary<string,IVariable> _variables = new Dictionary<string,IVariable>();
@@ -16,7 +17,7 @@ namespace WorkflowNet.DrawFlow
         public string Description { get => _description; set => _description = value; }
         public Dictionary<string, IPage> Pages { get => _pages; set => _pages = value; }
         public Dictionary<string, IVariable> Variables { get => _variables; set => _variables = value; }
-        public IPage MainPage { get => _pages[_mainPage]; set => _mainPage = value.Name; }
+        public string MainPage { get => _mainPage; set => _mainPage = value; }
 
         public void AddPage(IPage page)
         {

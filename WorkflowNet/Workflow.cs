@@ -1,15 +1,16 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WorkflowNet.Core.Interfaces;
-using WorkflowNet.Core.Interfaces.Actions;
 using WorkflowNet.Core.Models;
+using Action = WorkflowNet.Core.Models.Action;
 
 namespace WorkflowNet
 {
-    public class Workflow : IWorkflow
+    public class Workflow
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger<IWorkflow> _logger;
@@ -23,19 +24,19 @@ namespace WorkflowNet
         public Workflow(IServiceProvider serviceProvider, WorkflowSettings workflowSettings)
         {
             _serviceProvider = serviceProvider;
-            _logger = serviceProvider.GetRequiredService<ILogger<IWorkflow>>();
             _workflowSettings = workflowSettings;
+            _logger = workflowSettings.ActiveActionLogs ? serviceProvider.GetRequiredService<ILogger<IWorkflow>>() : default;
         }
-        public IActionHandler GetActionHandler(IAction action)
+        public IActionHandler GetActionHandler(Action action)
         {
-            var actionHandler = _serviceProvider.GetServices<IActionHandler>().FirstOrDefault(x => x.Name == action.Name);
+            var actionHandler = _serviceProvider.GetServices<IActionHandler>().FirstOrDefault(x => x.GetType().Name == action.ActionHandler.Name);
             if (actionHandler == default)
             {
                 throw new Exception($"IActionHandler for {action.Name} not found.");
             }
             return actionHandler;
         }
-        public IPage GetStartPage(Context context)
+        public Page GetStartPage(Context context)
         {
             return context.GetCurrentPage();
         }
@@ -44,7 +45,7 @@ namespace WorkflowNet
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public IAction GetNextAction(IContext context)
+        public Action GetNextAction(IContext context)
         {
             var connector = context.GetOutputConnector();
 
@@ -54,9 +55,9 @@ namespace WorkflowNet
             if (connector == default)
                 return default;
 
-            foreach (var page in context.GetPackage().GetPages())
+            foreach (var page in context.GetPackage().Pages)
             {
-                var match = page.GetActions().FirstOrDefault(x => connector.Connections.Any(c => c.ActionId == x.Id));
+                var match = page.Actions.FirstOrDefault(x => connector.Connections.Any(c => c.ActionId == x.Id));
                 if (match != default)
                 {
                     context.SetCurrentPage(page);
@@ -67,10 +68,10 @@ namespace WorkflowNet
 
             return default;
         }
-
+        
         public async Task<IContext> ProcessAsync(IContext context)
         {
-            IAction action = context.GetCurrentAction();
+            Action action = context.GetCurrentAction();
             context.StartSession();
             while(action != default)
             {
@@ -81,10 +82,10 @@ namespace WorkflowNet
             return context;
         }
 
-        public async Task<IContext> ProcessNextAsync(IContext context, IAction action)
+        public async Task<IContext> ProcessNextAsync(IContext context, Action action)
         {
             var actionHandler = GetActionHandler(action);
-            context.ApplyValues(action.GetVariables());
+            context.ApplyValues(action.Variables);
             context.SetCurrentAction(action);
             if(_workflowSettings.ActiveActionLogs)
                 _logger.LogInformation("PreProcess package:{package}|page:{page}|action:{action}|session:{session}",context.GetPackage().Name,context.GetCurrentPage().Name, action.Name, context.SessionId);
@@ -92,6 +93,24 @@ namespace WorkflowNet
             if (_workflowSettings.ActiveActionLogs)
                 _logger.LogInformation("PosProcess package:{package}|page:{page}|action:{action}|session:{session}", context.GetPackage().Name, context.GetCurrentPage().Name, action.Name, context.SessionId);
             return context;
+        }
+
+        public async Task<IContext> ProcessAsync(Package package)
+        {
+            var context = new Context();
+            context.SetPackage(package);
+            return await ProcessAsync(context);
+        }
+
+        public async Task<IContext> ProcessAsync(Package package, IDictionary<string, object> inputData)
+        {
+            var context = new Context();
+            context.SetPackage(package);
+            foreach(var item in inputData)
+            {
+                context.Add(item.Key, item.Value);
+            }
+            return await ProcessAsync(context);
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using WorkflowNet.Core.Interfaces;
-using WorkflowNet.Core.Interfaces.Actions;
 
 namespace WorkflowNet.Core.Models
 {
@@ -20,41 +20,41 @@ namespace WorkflowNet.Core.Models
         public DateTime StartTime { get => _startTime; set => _startTime = value; }
         public DateTime EndTime { get => _endTime; set => _endTime = value; }
 
-        public IEnumerable<IVariable> ApplyValues(IEnumerable<IVariable> variables)
+        public Dictionary<string,object> ApplyValues(Dictionary<string,object> variables)
         {
-            var output = new List<IVariable>();
+            var output = new Dictionary<string, object>();
             foreach (var variable in variables)
             {
-                if(variable.Type == typeof(IEnumerable<IVariable>))
+                if(variable.Value.GetType() == typeof(Dictionary<string,object>))
                 {
-                    var nestedVariables = variable.Get<IEnumerable<IVariable>>();
-                    output.AddRange(ApplyValues(nestedVariables));
+                    var nestedOutput = ApplyValues((Dictionary<string, object>)variable.Value);
+                    foreach(var nestedVariable in nestedOutput)
+                    {
+                        output.Add(nestedVariable.Key, nestedVariable.Value);
+                    }
                     continue;
                 }
-                if (variable.Type == typeof(string))
+                if (variable.GetType() == typeof(string))
                 {
-                    output.Add(ApplyValues(variable));
+                    output.Add(variable.Key, ApplyValues((string)variable.Value));
                     continue;
                 }
-                output.Add(variable);
+                output.Add(variable.Key,variable.Value);
             }
             return output;
         }
-        public IVariable ApplyValues(IVariable variable)
+        public string ApplyValues(string variable)
         {
-            var output = new Variable();
             var regex = new Regex("\\{\\{([^}]+)\\}\\}");
-            var variableValue = variable.Get<string>();
-            MatchCollection matches = regex.Matches(variableValue);
+            MatchCollection matches = regex.Matches(variable);
             foreach (Match match in matches)
             {
                 if(TryGetValue(match.Groups[1].Value, out object value))
                 {
-                    variableValue = variableValue.Replace(match.Value, (string)value);
+                    variable = variable.Replace(match.Value, (string)value);
                 }
             }
-            output.Set(variableValue);
-            return output;
+            return variable;
         }
 
         public void EndSession()
@@ -62,33 +62,35 @@ namespace WorkflowNet.Core.Models
             _endTime = DateTime.Now;
         }
 
-        public IAction GetCurrentAction()
+        public Action GetCurrentAction()
         {
             if (ContainsKey(CURRENT_ACTION))
-                return (IAction)this[CURRENT_ACTION];
+                return (Action)this[CURRENT_ACTION];
 
-            return GetCurrentPage().StartAction;
+            var page = GetCurrentPage();
+            return page.Actions.First(a=> a.Name == page.StartAction);
         }
 
-        public IPage GetCurrentPage()
+        public Page GetCurrentPage()
         {
             if(ContainsKey(CURRENT_PAGE))
-                return (IPage)this[CURRENT_PAGE];
+                return (Page)this[CURRENT_PAGE];
 
-            return GetPackage().MainPage;
+            var package = GetPackage();
+            return package.Pages.First(p=> p.Name == package.MainPage);
         }
 
-        public IActionConnector GetOutputConnector()
+        public ActionConnector GetOutputConnector()
         {
             if (ContainsKey(OUTPUT_CONNECTOR))
-                return (IActionConnector)this[OUTPUT_CONNECTOR];
+                return (ActionConnector)this[OUTPUT_CONNECTOR];
 
             return default;
         }
 
-        public IPackage GetPackage()
+        public Package GetPackage()
         {
-            return (IPackage)this[CURRENT_PACKAGE];
+            return (Package)this[CURRENT_PACKAGE];
         }
 
         public void RemoveOutputConnector()
@@ -96,22 +98,22 @@ namespace WorkflowNet.Core.Models
             Remove(OUTPUT_CONNECTOR);
         }
 
-        public void SetCurrentAction(IAction action)
+        public void SetCurrentAction(Action action)
         {
             this[CURRENT_ACTION] = action;
         }
 
-        public void SetCurrentPage(IPage page)
+        public void SetCurrentPage(Page page)
         {
             this[CURRENT_PAGE] = page;
         }
 
-        public void SetOutputConnector(IActionConnector ActionConnector)
+        public void SetOutputConnector(ActionConnector ActionConnector)
         {
             this[OUTPUT_CONNECTOR] = ActionConnector;
         }
 
-        public void SetPackage(IPackage package)
+        public void SetPackage(Package package)
         {
             this[CURRENT_PACKAGE] = package;
         }
